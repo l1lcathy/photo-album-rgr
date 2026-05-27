@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Photo Gallery</title>
+</head>
+
+<body>
+
+<h1>Photo Gallery</h1>
+
+<form
+        method="post"
+        action="/photos/upload"
+        enctype="multipart/form-data">
+
+    <input type="file" name="file">
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+<hr>
+
+<div th:each="photo : ${photos}">
+
+    <img
+            th:src="@{/{p}(p=${photo})}"
+            width="250">
+
+</div>
+
+</body>
+</html>
