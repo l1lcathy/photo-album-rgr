@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            padding:30px;
+            background:#f3f4f6;
+        }
+
+        input{
+            width:400px;
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            padding:12px 20px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .result{
+            margin-top:20px;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Поиск фотографий</h1>
+
+<form>
+
+    <input type="text"
+           placeholder="Введите тег или название">
+
+    <button type="submit">
+        Найти
+    </button>
+
+</form>
+
+<div class="result">
+    <h3>Результаты поиска</h3>
+    <p>Фото по запросу...</p>
+</div>
+
+</body>
+</html>
