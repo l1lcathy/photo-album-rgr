@@ -10,6 +10,8 @@ import java.util.List;
 
 public class AppUserDetails implements UserDetails {
 
+    private static final long serialVersionUID = 1L;
+
     private final User user;
 
     public AppUserDetails(User user) {
@@ -26,7 +28,10 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+
+        return List.of(
+            new SimpleGrantedAuthority("ROLE_" + user.getRole())
+        );
     }
 
     @Override

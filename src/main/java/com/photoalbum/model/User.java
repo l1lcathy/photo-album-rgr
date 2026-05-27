@@ -7,15 +7,29 @@ public class User {
     private String email;
     private String password;
 
+    // ДОБАВИТЬ
+    private String role;
+
+    // ДОБАВИТЬ
+    private boolean enabled;
+
     public User() {
 
     }
 
-    public User(Long id, String username, String email, String password) {
+    public User(Long id,
+                String username,
+                String email,
+                String password,
+                String role,
+                boolean enabled) {
+
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
+        this.enabled = enabled;
     }
 
     public Long getId() {
@@ -48,5 +62,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

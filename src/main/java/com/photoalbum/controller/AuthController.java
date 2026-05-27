@@ -13,7 +13,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    // Открыть страницу регистрации
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
 
@@ -22,12 +21,16 @@ public class AuthController {
         return "register";
     }
 
-    // Обработка формы
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user) {
 
         userService.registerUser(user);
 
-        return "redirect:/register?success";
+        return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
     }
 }
