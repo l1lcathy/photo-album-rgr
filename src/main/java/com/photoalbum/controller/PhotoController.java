@@ -1,6 +1,7 @@
 package com.photoalbum.controller;
 
 import com.photoalbum.model.Photo;
+import com.photoalbum.service.CommentService;
 import com.photoalbum.service.PhotoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +15,11 @@ import java.io.File;
 public class PhotoController {
 
     private final PhotoService photoService;
+    private final CommentService commentService;
 
-    public PhotoController(PhotoService photoService) {
+    public PhotoController(PhotoService photoService, CommentService commentService) {
         this.photoService = photoService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/gallery")
@@ -83,5 +86,32 @@ public class PhotoController {
     public String delete(@PathVariable Long id) {
         photoService.deletePhoto(id);
         return "redirect:/photos/gallery";
+    }
+    
+    // Просмотр фото с комментариями
+    @GetMapping("/{id}")
+    public String viewPhoto(@PathVariable Long id, Model model) {
+        Photo photo = photoService.getPhotoById(id);
+        if (photo == null) {
+            return "redirect:/photos/gallery";
+        }
+        model.addAttribute("photo", photo);
+        model.addAttribute("comments", commentService.getCommentsByPhotoId(id));
+        return "photo";
+    }
+    
+    // Добавление комментария
+    @PostMapping("/comment/{id}")
+    public String addComment(@PathVariable Long id, 
+                             @RequestParam String text) {
+        commentService.addComment(id, 7L, text);
+        return "redirect:/photos/" + id;
+    }
+    
+    // Оценка фото (рейтинг)
+    @PostMapping("/rate/{id}")
+    public String ratePhoto(@PathVariable Long id, @RequestParam Integer rating) {
+        photoService.ratePhoto(id, rating);
+        return "redirect:/photos/" + id;
     }
 }

@@ -35,6 +35,14 @@ public class PhotoService {
         return photoRepository.findById(id).orElse(null);
     }
     
+    public void ratePhoto(Long id, Integer rating) {
+        Photo photo = getPhotoById(id);
+        if (photo != null) {
+            photo.setRating(rating);
+            photoRepository.update(photo);
+        }
+    }
+    
     // Обновить фото (название, описание, рейтинг)
     public Photo updatePhoto(Photo photo) {
         photoRepository.update(photo);

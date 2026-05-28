@@ -1,11 +1,9 @@
 package com.photoalbum.controller;
 
-import com.photoalbum.model.AccessLevel;
 import com.photoalbum.model.Album;
-import com.photoalbum.security.AppUserDetails;
+import com.photoalbum.model.AccessLevel;
 import com.photoalbum.service.AlbumService;
-import com.photoalbum.service.UserService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.photoalbum.service.PhotoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,43 +13,50 @@ import org.springframework.web.bind.annotation.*;
 public class AlbumController {
 
     private final AlbumService albumService;
-    private final UserService userService;
+    private final PhotoService photoService;
 
-    public AlbumController(AlbumService albumService, UserService userService) {
+    public AlbumController(AlbumService albumService, PhotoService photoService) {
         this.albumService = albumService;
-        this.userService = userService;
+        this.photoService = photoService;
     }
 
     @GetMapping
-    public String list(@AuthenticationPrincipal AppUserDetails user, Model model) {
-        model.addAttribute("albums", albumService.getVisible(user.getId()));
-        return "albums";
+    public String myAlbums(Model model) {
+        model.addAttribute("albums", albumService.getByOwner(7L));
+        return "my_albums";  // ← ИСПРАВЛЕНО
     }
 
-    @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("accessLevels", AccessLevel.values());
-        return "album-form";
+    @GetMapping("/create")
+    public String showCreateForm() {
+        return "create_album";
     }
 
-    @PostMapping("/new")
-    public String create(
-            @AuthenticationPrincipal AppUserDetails user,
-            @RequestParam String name,
-            @RequestParam(required = false) String description,
-            @RequestParam AccessLevel accessLevel
-    ) {
+    @PostMapping("/create")
+    public String createAlbum(@RequestParam String name, 
+                              @RequestParam(defaultValue = "") String description,
+                              @RequestParam(defaultValue = "PUBLIC") String accessLevel) {
         Album album = new Album();
-        album.setOwnerId(user.getId());
         album.setName(name);
         album.setDescription(description);
-        album.setAccessLevel(accessLevel);
+        album.setAccessLevel(AccessLevel.valueOf(accessLevel));
+        album.setOwnerId(7L);
         albumService.create(album);
         return "redirect:/albums";
     }
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public String viewAlbum(@PathVariable Long id, Model model) {
+        Album album = albumService.findById(id);
+        if (album == null) {
+            return "redirect:/albums";
+        }
+        model.addAttribute("album", album);
+        model.addAttribute("photos", photoService.getPhotosByAlbumId(id));
+        return "album";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteAlbum(@PathVariable Long id) {
         albumService.delete(id);
         return "redirect:/albums";
     }

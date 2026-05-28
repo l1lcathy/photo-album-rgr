@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать альбом</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { background: #2c3e50; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
+        .nav a { color: white; text-decoration: none; padding: 8px 15px; }
+        .form-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #219a52; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 Создать альбом</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Мои альбомы</a>
+            </div>
+        </div>
+        
+        <div class="form-card">
+            <form method="post" action="/albums/create">
+                <div class="form-group">
+                    <label>Название альбома *</label>
+                    <input type="text" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Уровень доступа</label>
+                    <select name="accessLevel">
+                        <option value="PUBLIC">🌍 Общий (видят все)</option>
+                        <option value="FRIENDS">👥 Только для друзей</option>
+                        <option value="PRIVATE">🔒 Только для меня</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">✅ Создать альбом</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои альбомы</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: #2c3e50; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: white; text-decoration: none; padding: 8px 15px; }
+        .album-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .album-info h3 { margin: 0 0 5px 0; }
+        .album-info p { margin: 0; color: #7f8c8d; }
+        .btn { padding: 8px 15px; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; }
+        .btn-view { background: #3498db; color: white; }
+        .btn-delete { background: #e74c3c; color: white; }
+        .btn-create { background: #27ae60; color: white; display: inline-block; margin-bottom: 20px; padding: 10px 20px; }
+        .empty { text-align: center; padding: 50px; background: white; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📂 Мои альбомы</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Мои альбомы</a>
+                <a href="/photos/gallery">Галерея</a>
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+        
+        <a href="/albums/create" class="btn-create">➕ Создать новый альбом</a>
+        
+        <div th:if="${albums != null and !albums.empty}">
+            <div th:each="album : ${albums}" class="album-card">
+                <div class="album-info">
+                    <h3 th:text="${album.name}">Название альбома</h3>
+                    <p th:text="${album.description}">Описание</p>
+                    <p>🔒 Доступ: <span th:text="${album.accessLevel}">PUBLIC</span></p>
+                </div>
+                <div>
+                    <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-view">📷 Открыть</a>
+                    <form method="post" th:action="@{/albums/delete/{id}(id=${album.id})}" style="display: inline;">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Удалить альбом? Все фото внутри тоже удалятся!')">🗑️ Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${albums == null or albums.empty}" class="empty">
+            <p>📁 У вас пока нет альбомов.</p>
+            <a href="/albums/create" class="btn-create">Создать первый альбом</a>
+        </div>
+    </div>
+</body>
+</html>

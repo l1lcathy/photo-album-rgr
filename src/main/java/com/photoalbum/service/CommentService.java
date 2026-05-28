@@ -4,6 +4,7 @@ import com.photoalbum.model.Comment;
 import com.photoalbum.repository.jdbc.CommentRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,5 +36,20 @@ public class CommentService {
 
     public void delete(Long id) {
         commentRepository.deleteById(id);
+    }
+    
+    // Получить все комментарии к фото
+    public List<Comment> getCommentsByPhotoId(Long photoId) {
+        return commentRepository.findByPhotoId(photoId);
+    }
+    
+    // Добавить комментарий
+    public void addComment(Long photoId, Long userId, String text) {
+        Comment comment = new Comment();
+        comment.setPhotoId(photoId);
+        comment.setUserId(userId);
+        comment.setText(text);
+        comment.setCreatedAt(LocalDateTime.now());
+        commentRepository.save(comment);
     }
 }

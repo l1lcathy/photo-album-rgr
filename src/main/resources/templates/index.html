@@ -1,15 +1,128 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home</title>
+    <meta charset="UTF-8">
+    <title>Фотоальбом</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav {
+            display: flex;
+            gap: 15px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #34495e;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .welcome {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn-green {
+            background: #27ae60;
+        }
+        .btn-green:hover {
+            background: #219a52;
+        }
+        .btn-red {
+            background: #e74c3c;
+        }
+        .btn-red:hover {
+            background: #c0392b;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
-
-<h1>PHOTO ALBUM</h1>
-
-<p>You are logged in!</p>
-
-<a href="/logout">Logout</a>
-
+    <div class="container">
+        <div class="header">
+            <h1>📸 Фотоальбом</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Мои альбомы</a>
+                <a href="/photos/gallery">Галерея</a>
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Добро пожаловать в Фотоальбом!</h2>
+            <p class="welcome">Храните, организуйте и делитесь своими фотографиями в удобном месте.</p>
+        </div>
+        
+        <div class="card">
+            <h3>📁 Быстрые действия</h3>
+            <a href="/albums/create" class="btn btn-green">➕ Создать альбом</a>
+            <a href="/photos/gallery" class="btn">🖼️ Загрузить фото</a>
+            <a href="/albums" class="btn">📂 Мои альбомы</a>
+        </div>
+        
+        <div class="card">
+            <h3>⭐ Возможности</h3>
+            <ul>
+                <li>Создание альбомов и загрузка фотографий</li>
+                <li>Комментирование фотографий</li>
+                <li>Теги и поиск по ним</li>
+                <li>Настройка уровня доступа к альбомам</li>
+                <li>Друзья и общие альбомы</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Photo Album &copy; 2026</p>
+        </div>
+    </div>
 </body>
 </html>
