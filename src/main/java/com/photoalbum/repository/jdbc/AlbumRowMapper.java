@@ -20,7 +20,13 @@ public class AlbumRowMapper implements RowMapper<Album> {
         album.setName(rs.getString("title"));
         album.setDescription(rs.getString("description"));
         
-        // Преобразуем строку из БД в enum AccessLevel
+        try {
+            album.setUsername(rs.getString("username"));
+        } catch (Exception e) {
+           
+        }
+        
+        
         String accessType = rs.getString("access_type");
         if (accessType != null) {
             album.setAccessLevel(AccessLevel.valueOf(accessType));

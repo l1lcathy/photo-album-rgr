@@ -15,18 +15,20 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-
         model.addAttribute("user", new User());
-
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) {
-
-        userService.registerUser(user);
-
-        return "redirect:/login";
+    public String registerUser(@ModelAttribute User user, Model model) {
+        try {
+            userService.registerUser(user);
+            model.addAttribute("message", "На вашу почту отправлена ссылка для подтверждения. Проверьте email!");
+            return "login";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "register";
+        }
     }
 
     @GetMapping("/login")

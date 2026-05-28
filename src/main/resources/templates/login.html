@@ -9,16 +9,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
         .container {
             background: white;
             border-radius: 20px;
@@ -28,39 +26,32 @@
             max-width: 400px;
             margin: 20px;
         }
-        
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 40px;
             text-align: center;
         }
-        
         .header h1 {
             color: white;
             font-size: 32px;
             margin-bottom: 10px;
         }
-        
         .header p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
         }
-        
         .form-container {
             padding: 40px;
         }
-        
         .form-group {
             margin-bottom: 20px;
         }
-        
         label {
             display: block;
             margin-bottom: 8px;
             color: #333;
             font-weight: 500;
         }
-        
         input {
             width: 100%;
             padding: 12px 15px;
@@ -69,13 +60,12 @@
             font-size: 14px;
             transition: all 0.3s;
             outline: none;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
         }
-        
         input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
         .btn {
             width: 100%;
             padding: 12px;
@@ -87,30 +77,26 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
         }
-        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
         .register-link {
             text-align: center;
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid #e1e5e9;
         }
-        
         .register-link a {
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
         }
-        
         .register-link a:hover {
             text-decoration: underline;
         }
-        
         .error-message {
             background: #fee2e2;
             color: #dc2626;
@@ -120,25 +106,32 @@
             font-size: 14px;
             text-align: center;
         }
-        
-        .camera-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid #c3e6cb;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="camera-icon">📸</div>
             <h1>Фотоальбом</h1>
             <p>Войдите, чтобы продолжить</p>
         </div>
         
         <div class="form-container">
             <div th:if="${param.error}" class="error-message">
-                ❌ Неверное имя пользователя или пароль
+                Неверное имя пользователя или пароль
             </div>
+            
+            <div th:if="${message}" class="success-message" th:text="${message}"></div>
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
             
             <form method="post" action="/login">
                 <div class="form-group">
@@ -151,7 +144,7 @@
                     <input type="password" name="password" placeholder="Введите пароль" required>
                 </div>
                 
-                <button type="submit" class="btn">🔓 Войти</button>
+                <button type="submit" class="btn">Войти</button>
             </form>
             
             <div class="register-link">

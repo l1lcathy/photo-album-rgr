@@ -5,7 +5,7 @@
     <title>Поиск - Фотоальбом</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
             margin: 0;
             padding: 20px;
             background: #f3f4f6;
@@ -29,10 +29,6 @@
             text-decoration: none;
             padding: 8px 15px;
         }
-        .nav a:hover {
-            background: #34495e;
-            border-radius: 5px;
-        }
         .search-box {
             background: white;
             padding: 20px;
@@ -40,14 +36,40 @@
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .search-box input {
+        .search-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .search-form input, .search-form select {
             width: 70%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
         }
-        .search-box button {
+        .search-form button {
             padding: 12px 24px;
             background: #3498db;
             color: white;
@@ -55,9 +77,19 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
         }
-        .search-box button:hover {
+        .search-form button:hover {
             background: #2980b9;
+        }
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .date-inputs input {
+            width: auto;
+            flex: 1;
         }
         .popular-tags {
             margin-top: 15px;
@@ -122,35 +154,93 @@
             margin-bottom: 20px;
             color: #333;
         }
+        .search-meta {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .author-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .author-link:hover {
+            text-decoration: underline;
+        }
     </style>
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector('.tab-btn[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔍 Поиск фотографий</h1>
+            <h1>Поиск фотографий</h1>
             <div class="nav">
                 <a href="/">Главная</a>
                 <a href="/albums">Мои альбомы</a>
                 <a href="/photos/gallery">Галерея</a>
+                <a href="/search">Поиск</a>
+                <a href="/friends">Друзья</a>
                 <a href="/logout">Выйти</a>
             </div>
         </div>
 
         <div class="search-box">
-            <form method="get" action="/search">
-                <input type="text" name="tag" placeholder="Поиск по тегу..." th:value="${currentTag}">
-                <button type="submit">🔍 Найти</button>
-            </form>
-            
-            <div class="popular-tags" th:if="${popularTags != null and !popularTags.empty}">
-                <strong>Популярные теги:</strong>
-                <a th:each="tag : ${popularTags}" th:href="@{/search?tag={name}(name=${tag.name})}" 
-                   class="tag" th:text="${tag.name}"></a>
+            <div class="search-tabs">
+                <button class="tab-btn active" onclick="showTab('tag')">По тегу</button>
+                <button class="tab-btn" onclick="showTab('date')">По дате</button>
+                <button class="tab-btn" onclick="showTab('author')">По автору</button>
+            </div>
+
+            <div id="tag" class="tab-pane active">
+                <form class="search-form" method="get" action="/search">
+                    <input type="hidden" name="type" value="tag">
+                    <input type="text" name="query" placeholder="Введите тег..." th:value="${param.query}">
+                    <button type="submit">Найти</button>
+                </form>
+                <div class="popular-tags" th:if="${popularTags != null and !popularTags.empty}">
+                    <strong>Популярные теги:</strong>
+                    <a th:each="tag : ${popularTags}" th:href="@{/search?type=tag&amp;query={name}(name=${tag.name})}" 
+                       class="tag" th:text="${tag.name}"></a>
+                </div>
+            </div>
+
+            <div id="date" class="tab-pane">
+                <form class="search-form" method="get" action="/search">
+                    <input type="hidden" name="type" value="date">
+                    <div class="date-inputs">
+                        <input type="date" name="from" placeholder="С даты" th:value="${param.from}">
+                        <span>—</span>
+                        <input type="date" name="to" placeholder="По дату" th:value="${param.to}">
+                    </div>
+                    <button type="submit">Найти</button>
+                </form>
+            </div>
+
+            <div id="author" class="tab-pane">
+                <form class="search-form" method="get" action="/search">
+                    <input type="hidden" name="type" value="author">
+                    <input type="text" name="query" placeholder="Имя пользователя..." th:value="${param.query}">
+                    <button type="submit">Найти</button>
+                </form>
             </div>
         </div>
 
-        <div th:if="${currentTag != null}" class="search-title">
-            <h2>📸 Результаты поиска по тегу: <strong style="color: #3498db;" th:text="${currentTag}"></strong></h2>
+        <div th:if="${searchType != null}" class="search-title">
+            <h2 th:if="${searchType == 'tag'}" th:text="'Результаты поиска по тегу: ' + ${query}"></h2>
+            <h2 th:if="${searchType == 'author'}" th:text="'Фото пользователя: ' + ${query}"></h2>
+            <h2 th:if="${searchType == 'date' and fromDate != null and toDate != null}" 
+                th:text="'Фото за период: ' + ${fromDate} + ' — ' + ${toDate}"></h2>
+            <div th:if="${photos != null}" class="search-meta">Найдено: <span th:text="${photos.size()}"></span> фото</div>
         </div>
 
         <div th:if="${photos != null and !photos.empty}" class="photo-grid">
@@ -159,19 +249,22 @@
                 <div class="photo-info">
                     <h4 th:text="${photo.title}">Название</h4>
                     <p th:text="${photo.description}">Описание</p>
-                    <p>⭐ Рейтинг: <span th:text="${photo.rating}">0</span></p>
-                    <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn">💬 Открыть</a>
+                    <p>Автор: <a th:href="@{/search?type=author&amp;query={username}(username=${photo.Username})}" 
+                           class="author-link" th:text="${photo.Username}"></a></p>
+                    <p>Дата: <span th:text="${photo.createdAt}"></span></p>
+                    <p>Рейтинг: <span th:text="${photo.rating}">0</span></p>
+                    <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn">Открыть</a>
                 </div>
             </div>
         </div>
 
-        <div th:if="${photos == null or photos.empty and currentTag != null}" class="empty">
-            <p>📷 Нет фотографий с тегом <strong th:text="${currentTag}"></strong></p>
-            <p>Попробуйте другой тег или <a href="/photos/gallery">загрузите новое фото</a></p>
+        <div th:if="${photos != null and photos.empty}" class="empty">
+            <p>Ничего не найдено</p>
+            <p>Попробуйте изменить параметры поиска или <a href="/photos/gallery">загрузите новое фото</a></p>
         </div>
 
-        <div th:if="${currentTag == null}" class="empty">
-            <p>🔍 Введите тег для поиска или выберите из популярных выше</p>
+        <div th:if="${photos == null and searchType == null}" class="empty">
+            <p>Выберите тип поиска и введите запрос</p>
         </div>
     </div>
 </body>

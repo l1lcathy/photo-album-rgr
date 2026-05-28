@@ -26,11 +26,14 @@ public class SecurityConfig {
                     "/",
                     "/login",
                     "/register",
+                    "/confirm",
                     "/css/**",
                     "/js/**",
                     "/images/**"
                 ).permitAll()
-
+                
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                
                 .anyRequest().authenticated()
             )
 

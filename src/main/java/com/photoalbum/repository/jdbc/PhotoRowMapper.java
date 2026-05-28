@@ -22,6 +22,13 @@ public class PhotoRowMapper implements RowMapper<Photo> {
         photo.setUserId(rs.getLong("user_id"));
         photo.setRating(rs.getInt("rating"));
         
+        // ДОБАВИТЬ - маппинг username из БД
+        try {
+            photo.setUsername(rs.getString("username"));
+        } catch (Exception e) {
+            // если колонки username нет в запросе, игнорируем
+        }
+        
         java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
         if (timestamp != null) {
             photo.setCreatedAt(timestamp.toLocalDateTime());

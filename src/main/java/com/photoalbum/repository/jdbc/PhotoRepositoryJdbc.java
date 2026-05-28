@@ -2,6 +2,7 @@ package com.photoalbum.repository.jdbc;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,17 +22,28 @@ public class PhotoRepositoryJdbc {
     private PhotoRowMapper photoRowMapper;
     
     public List<Photo> findByAlbumId(Long albumId) {
-        String sql = "SELECT * FROM photos WHERE album_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT p.*, u.username FROM photos p " +
+                     "JOIN users u ON p.user_id = u.id " +
+                     "WHERE p.album_id = ? ORDER BY p.created_at DESC";
         return jdbcTemplate.query(sql, photoRowMapper, albumId);
     }
     
+    public List<Photo> findAll() {
+        String sql = "SELECT p.*, u.username FROM photos p JOIN users u ON p.user_id = u.id ORDER BY p.created_at DESC";
+        return jdbcTemplate.query(sql, photoRowMapper);
+    }
+    
     public List<Photo> findByUserId(Long userId) {
-        String sql = "SELECT * FROM photos WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT p.*, u.username FROM photos p " +
+                     "JOIN users u ON p.user_id = u.id " +
+                     "WHERE p.user_id = ? ORDER BY p.created_at DESC";
         return jdbcTemplate.query(sql, photoRowMapper, userId);
     }
     
     public Optional<Photo> findById(Long id) {
-        String sql = "SELECT * FROM photos WHERE id = ?";
+        String sql = "SELECT p.*, u.username FROM photos p " +
+                     "JOIN users u ON p.user_id = u.id " +
+                     "WHERE p.id = ?";
         try {
             Photo photo = jdbcTemplate.queryForObject(sql, photoRowMapper, id);
             return Optional.ofNullable(photo);
@@ -74,9 +86,35 @@ public class PhotoRepositoryJdbc {
     }
     
     public List<Photo> findByTagId(Long tagId) {
-        String sql = "SELECT p.* FROM photos p " +
+        String sql = "SELECT p.*, u.username FROM photos p " +
                      "JOIN photo_tags pt ON p.id = pt.photo_id " +
+                     "JOIN users u ON p.user_id = u.id " +
                      "WHERE pt.tag_id = ? ORDER BY p.created_at DESC";
         return jdbcTemplate.query(sql, photoRowMapper, tagId);
+    }
+    
+    public List<Photo> findByUsername(String username) {
+        String sql = "SELECT p.*, u.username FROM photos p " +
+                     "JOIN users u ON p.user_id = u.id " +
+                     "WHERE LOWER(u.username) LIKE LOWER(?) ORDER BY p.created_at DESC";
+        return jdbcTemplate.query(sql, photoRowMapper, "%" + username + "%");
+    }
+    
+    public List<Photo> findByDateRange(LocalDateTime from, LocalDateTime to) {
+        String sql = "SELECT p.*, u.username FROM photos p " +
+                     "JOIN users u ON p.user_id = u.id WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+        
+        if (from != null) {
+            sql += " AND p.created_at >= ?";
+            params.add(Timestamp.valueOf(from));
+        }
+        if (to != null) {
+            sql += " AND p.created_at <= ?";
+            params.add(Timestamp.valueOf(to));
+        }
+        sql += " ORDER BY p.created_at DESC";
+        
+        return jdbcTemplate.query(sql, photoRowMapper, params.toArray());
     }
 }

@@ -2,6 +2,7 @@ package com.photoalbum.service;
 
 import com.photoalbum.model.Album;
 import com.photoalbum.repository.jdbc.AlbumRepositoryJdbc;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,11 +10,11 @@ import java.util.List;
 @Service
 public class AlbumService {
 
-    private final AlbumRepositoryJdbc albumRepository;
-
-    public AlbumService(AlbumRepositoryJdbc albumRepository) {
-        this.albumRepository = albumRepository;
-    }
+    @Autowired
+    private AlbumRepositoryJdbc albumRepository;
+    
+    @Autowired
+    private FriendshipService friendshipService;
 
     public Album create(Album album) {
         return albumRepository.save(album);
@@ -22,17 +23,19 @@ public class AlbumService {
     public List<Album> getByOwner(Long ownerId) {
         return albumRepository.findByOwnerId(ownerId);
     }
-
-    public List<Album> getVisible(Long userId) {
-        // Пока возвращаем только публичные альбомы
-        // TODO: добавить логику для "друзей" позже
-        return albumRepository.findPublicAlbums();
-    }
-
-    public void delete(Long id) {
-        albumRepository.deleteById(id);
+    
+    // Получить доступные альбомы для пользователя (свои + публичные + альбомы друзей)
+    public List<Album> getAccessibleAlbums(Long userId) {
+        List<Long> friendsIds = friendshipService.getFriendsIds(userId);
+        return albumRepository.findAccessibleAlbums(userId, friendsIds);
     }
     
+    // Проверить доступ к альбому
+    public boolean hasAccess(Long albumId, Long userId) {
+        List<Long> friendsIds = friendshipService.getFriendsIds(userId);
+        return albumRepository.hasAccess(albumId, userId, friendsIds);
+    }
+
     public Album findById(Long id) {
         return albumRepository.findById(id).orElse(null);
     }
@@ -40,5 +43,9 @@ public class AlbumService {
     public Album update(Album album) {
         albumRepository.update(album);
         return album;
+    }
+
+    public void delete(Long id) {
+        albumRepository.deleteById(id);
     }
 }

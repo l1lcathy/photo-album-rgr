@@ -16,6 +16,7 @@ public class TagRepositoryJdbc {
     private TagRowMapper tagRowMapper;
     
     public Tag findOrCreate(String tagName) {
+        
         String findSql = "SELECT * FROM tags WHERE LOWER(name) = LOWER(?)";
         try {
             return jdbcTemplate.queryForObject(findSql, tagRowMapper, tagName);
@@ -41,7 +42,21 @@ public class TagRepositoryJdbc {
         return jdbcTemplate.query(sql, tagRowMapper, photoId);
     }
     
- // Найти тег по имени
+    public List<Long> getPhotoIdsByTagId(Long tagId) {
+        String sql = "SELECT photo_id FROM photo_tags WHERE tag_id = ?";
+        return jdbcTemplate.queryForList(sql, Long.class, tagId);
+    }
+    
+    public List<Tag> searchTags(String query) {
+        String sql = "SELECT * FROM tags WHERE LOWER(name) LIKE LOWER(?) LIMIT 10";
+        return jdbcTemplate.query(sql, tagRowMapper, "%" + query + "%");
+    }
+    
+    public List<Tag> getAllTags() {
+        String sql = "SELECT * FROM tags ORDER BY name";
+        return jdbcTemplate.query(sql, tagRowMapper);
+    }
+    
     public Tag findByName(String name) {
         String sql = "SELECT * FROM tags WHERE LOWER(name) = LOWER(?)";
         try {
@@ -50,12 +65,17 @@ public class TagRepositoryJdbc {
             return null;
         }
     }
-
-    // Получить популярные теги (топ-10)
+    
     public List<Tag> getPopularTags() {
         String sql = "SELECT t.*, COUNT(pt.photo_id) as cnt FROM tags t " +
                      "JOIN photo_tags pt ON t.id = pt.tag_id " +
                      "GROUP BY t.id ORDER BY cnt DESC LIMIT 10";
         return jdbcTemplate.query(sql, tagRowMapper);
+    }
+    
+    public void deleteTagsForPhoto(Long photoId) {
+        String sql = "DELETE FROM photo_tags WHERE photo_id = ?";
+        jdbcTemplate.update(sql, photoId);
+        System.out.println("Удалены теги для фото " + photoId);
     }
 }

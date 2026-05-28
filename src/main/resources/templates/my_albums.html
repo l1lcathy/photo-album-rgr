@@ -2,55 +2,193 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Мои альбомы</title>
+    <title>Мои альбомы - Фотоальбом</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: #2c3e50; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .nav a { color: white; text-decoration: none; padding: 8px 15px; }
-        .album-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .album-info h3 { margin: 0 0 5px 0; }
-        .album-info p { margin: 0; color: #7f8c8d; }
-        .btn { padding: 8px 15px; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; }
-        .btn-view { background: #3498db; color: white; }
-        .btn-delete { background: #e74c3c; color: white; }
-        .btn-create { background: #27ae60; color: white; display: inline-block; margin-bottom: 20px; padding: 10px 20px; }
-        .empty { text-align: center; padding: 50px; background: white; border-radius: 8px; }
+        body {
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .nav a:hover {
+            background: #34495e;
+            border-radius: 5px;
+        }
+        .section-title {
+            margin: 20px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            color: #2c3e50;
+        }
+        .album-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .album-info h3 {
+            margin: 0 0 5px 0;
+        }
+        .album-info p {
+            margin: 5px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .album-info .author {
+            color: #3498db;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            display: inline-block;
+        }
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+        .btn-view:hover {
+            background: #2980b9;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        .btn-create {
+            background: #27ae60;
+            color: white;
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+        }
+        .btn-create:hover {
+            background: #219a52;
+        }
+        .empty {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 8px;
+            color: #999;
+        }
+        .access-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .access-public {
+            background: #d4edda;
+            color: #155724;
+        }
+        .access-friends {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .access-private {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📂 Мои альбомы</h1>
+            <h1>Мои альбомы</h1>
             <div class="nav">
                 <a href="/">Главная</a>
                 <a href="/albums">Мои альбомы</a>
                 <a href="/photos/gallery">Галерея</a>
+                <a href="/search">Поиск</a>
+                <a href="/friends">Друзья</a>
+                <a href="/admin">Админ панель</a>
                 <a href="/logout">Выйти</a>
             </div>
         </div>
         
-        <a href="/albums/create" class="btn-create">➕ Создать новый альбом</a>
+        <a href="/albums/create" class="btn btn-create">Создать новый альбом</a>
         
+        <h2 class="section-title">Мои альбомы</h2>
         <div th:if="${albums != null and !albums.empty}">
             <div th:each="album : ${albums}" class="album-card">
                 <div class="album-info">
                     <h3 th:text="${album.name}">Название альбома</h3>
                     <p th:text="${album.description}">Описание</p>
-                    <p>🔒 Доступ: <span th:text="${album.accessLevel}">PUBLIC</span></p>
+                    <p>
+                        Доступ: 
+                        <span th:if="${album.accessLevel.name() == 'PUBLIC'}" class="access-badge access-public">Общий</span>
+                        <span th:if="${album.accessLevel.name() == 'FRIENDS'}" class="access-badge access-friends">Только для друзей</span>
+                        <span th:if="${album.accessLevel.name() == 'PRIVATE'}" class="access-badge access-private">Только для меня</span>
+                    </p>
+                    <p class="author">Создан: <span th:text="${album.createdAt}"></span></p>
                 </div>
                 <div>
-                    <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-view">📷 Открыть</a>
+                    <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-view">Открыть</a>
                     <form method="post" th:action="@{/albums/delete/{id}(id=${album.id})}" style="display: inline;">
-                        <button type="submit" class="btn btn-delete" onclick="return confirm('Удалить альбом? Все фото внутри тоже удалятся!')">🗑️ Удалить</button>
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Удалить альбом? Все фото внутри тоже удалятся!')">Удалить</button>
                     </form>
                 </div>
             </div>
         </div>
-        
         <div th:if="${albums == null or albums.empty}" class="empty">
-            <p>📁 У вас пока нет альбомов.</p>
+            <p>У вас пока нет альбомов.</p>
             <a href="/albums/create" class="btn-create">Создать первый альбом</a>
+        </div>
+        
+        <h2 class="section-title">Доступные альбомы</h2>
+        <div th:if="${accessibleAlbums != null and !accessibleAlbums.empty}">
+            <div th:each="album : ${accessibleAlbums}" th:if="${album.ownerId != currentUserId}" class="album-card">
+                <div class="album-info">
+                    <h3 th:text="${album.name}">Название альбома</h3>
+                    <p th:text="${album.description}">Описание</p>
+                    <p>
+                        Доступ: 
+                        <span th:if="${album.accessLevel.name() == 'PUBLIC'}" class="access-badge access-public">Общий</span>
+                        <span th:if="${album.accessLevel.name() == 'FRIENDS'}" class="access-badge access-friends">Только для друзей</span>
+                        <span th:if="${album.accessLevel.name() == 'PRIVATE'}" class="access-badge access-private">Только для меня</span>
+                    </p>
+                    <p class="author">Автор: <span th:text="${album.username}"></span></p>
+                    <p class="author">Создан: <span th:text="${album.createdAt}"></span></p>
+                </div>
+                <div>
+                    <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-view">Просмотреть</a>
+                </div>
+            </div>
+        </div>
+        <div th:if="${accessibleAlbums == null or accessibleAlbums.empty}" class="empty">
+            <p>Нет доступных альбомов других пользователей.</p>
         </div>
     </div>
 </body>

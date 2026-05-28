@@ -1,7 +1,5 @@
 package com.photoalbum.repository.jdbc;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,8 +7,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.photoalbum.model.User;
@@ -59,27 +55,21 @@ public class UserRepositoryJdbc {
         }
     }
     
+    // ИСПРАВЛЕННЫЙ МЕТОД SAVE - больше нет ошибки с getKey
     public User save(User user) {
         String sql = "INSERT INTO users (username, email, password_hash, role, enabled, created_at) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+                     "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
         
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Long generatedId = jdbcTemplate.queryForObject(sql, Long.class,
+            user.getUsername(),
+            user.getEmail(),
+            user.getPasswordHash(),
+            user.getRole(),
+            user.isEnabled(),
+            Timestamp.valueOf(user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now())
+        );
         
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPasswordHash());
-            ps.setString(4, user.getRole());
-            ps.setBoolean(5, user.isEnabled());
-            ps.setTimestamp(6, Timestamp.valueOf(user.getCreatedAt() != null ? 
-                           user.getCreatedAt() : LocalDateTime.now()));
-            return ps;
-        }, keyHolder);
-        
-        if (keyHolder.getKey() != null) {
-            user.setId(keyHolder.getKey().longValue());
-        }
+        user.setId(generatedId);
         return user;
     }
     

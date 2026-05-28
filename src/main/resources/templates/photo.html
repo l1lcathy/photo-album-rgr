@@ -2,39 +2,167 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${photo.title}">Фото</title>
+    <title th:text="${photo.title}">Фото - Фотоальбом</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { background: #2c3e50; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; }
-        .nav a { color: white; text-decoration: none; padding: 8px 15px; }
-        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .photo-card img { width: 100%; max-height: 500px; object-fit: contain; background: #f0f0f0; }
-        .photo-info { padding: 20px; }
-        .comments-section { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .comment { border-bottom: 1px solid #eee; padding: 10px 0; }
-        .comment-author { font-weight: bold; color: #2c3e50; }
-        .comment-date { font-size: 12px; color: #999; margin-left: 10px; }
-        .comment-text { margin-top: 5px; }
-        .comment-form { margin-top: 20px; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; resize: vertical; }
-        .btn { background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
-        .btn:hover { background: #2980b9; }
-        .btn-delete { background: #e74c3c; font-size: 12px; padding: 5px 10px; margin-left: 10px; }
-        .back-link { display: inline-block; margin-top: 20px; color: #3498db; text-decoration: none; }
-        .rating { color: #f1c40f; font-size: 20px; }
-        .tags-section { margin: 15px 0; }
-        .tag { display: inline-block; background: #e0e0e0; padding: 5px 12px; margin: 3px; border-radius: 15px; text-decoration: none; color: #333; font-size: 13px; }
-        .tag:hover { background: #3498db; color: white; }
+        body {
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .photo-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .photo-card img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            background: #f0f0f0;
+        }
+        .photo-info {
+            padding: 20px;
+        }
+        .comments-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .comment {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .comment-author {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .comment-date {
+            font-size: 12px;
+            color: #999;
+            margin-left: 10px;
+        }
+        .comment-text {
+            margin-top: 5px;
+        }
+        .comment-form {
+            margin-top: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn-copy {
+            background: #27ae60;
+        }
+        .btn-copy:hover {
+            background: #219a52;
+        }
+        .btn-edit {
+            background: #f39c12;
+            margin-right: 10px;
+        }
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .rating {
+            color: #f1c40f;
+            font-size: 20px;
+        }
+        .tags-section {
+            margin: 15px 0;
+        }
+        .tag {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 5px 12px;
+            margin: 3px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 13px;
+        }
+        .tag:hover {
+            background: #3498db;
+            color: white;
+        }
+        .copy-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .copy-section select, .copy-section input {
+            padding: 8px;
+            margin-right: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+        .action-buttons {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📸 <span th:text="${photo.title}">Фото</span></h1>
+            <h1><span th:text="${photo.title}">Фото</span></h1>
             <div class="nav">
                 <a href="/">Главная</a>
                 <a href="/albums">Альбомы</a>
+                <a href="/search">Поиск</a>
+                <a href="/friends">Друзья</a>
+                <a href="/admin">Админ панель</a>
                 <a href="/logout">Выйти</a>
             </div>
         </div>
@@ -44,12 +172,11 @@
             <div class="photo-info">
                 <h2 th:text="${photo.title}">Название</h2>
                 <p th:text="${photo.description}">Описание</p>
-                <p class="rating">⭐ Рейтинг: <span th:text="${photo.rating}">0</span>/5</p>
+                <p class="rating">Рейтинг: <span th:text="${photo.rating}">0</span>/5</p>
                 
-                <!-- БЛОК ТЕГОВ - ДОБАВЬТЕ ЭТОТ КОД -->
                 <div th:if="${tags != null and !tags.empty}" class="tags-section">
-                    <strong>🏷️ Теги:</strong>
-                    <a th:each="tag : ${tags}" th:href="@{/search?tag={tagName}(tagName=${tag.name})}" 
+                    <strong>Теги:</strong>
+                    <a th:each="tag : ${tags}" th:href="@{/search?type=tag&amp;query={tagName}(tagName=${tag.name})}" 
                        class="tag" th:text="${tag.name}"></a>
                 </div>
                 <div th:if="${tags == null or tags.empty}" class="tags-section">
@@ -59,44 +186,61 @@
                 <form method="post" th:action="@{/photos/rate/{id}(id=${photo.id})}" style="display: inline;">
                     <select name="rating" onchange="this.form.submit()">
                         <option value="">Оценить</option>
-                        <option value="1">⭐ 1</option>
-                        <option value="2">⭐⭐ 2</option>
-                        <option value="3">⭐⭐⭐ 3</option>
-                        <option value="4">⭐⭐⭐⭐ 4</option>
-                        <option value="5">⭐⭐⭐⭐⭐ 5</option>
+                        <option value="1">1 звезда</option>
+                        <option value="2">2 звезды</option>
+                        <option value="3">3 звезды</option>
+                        <option value="4">4 звезды</option>
+                        <option value="5">5 звезд</option>
                     </select>
                 </form>
+                
+                <div class="action-buttons">
+                    <div th:if="${photo.userId == currentUserId}">
+                        <a th:href="@{/photos/edit/{id}(id=${photo.id})}" class="btn btn-edit">Редактировать</a>
+                    </div>
+                    
+                    <div th:if="${photo.userId != currentUserId}">
+                        <form method="post" th:action="@{/photos/copy/{id}(id=${photo.id})}" style="display: inline-block;">
+                            <select name="targetAlbumId" required>
+                                <option value="">Выберите альбом</option>
+                                <option th:each="album : ${userAlbums}" th:value="${album.id}" th:text="${album.name}"></option>
+                            </select>
+                            <input type="text" name="tags" placeholder="Свои теги">
+                            <button type="submit" class="btn btn-copy">Копировать в мой альбом</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="comments-section">
-    <h3>💬 Комментарии (<span th:text="${#lists.size(comments)}">0</span>)</h3>
-    
-    <div th:if="${comments != null and !comments.empty}">
-        <div th:each="comment : ${comments}" class="comment">
-            <div>
-                <span class="comment-author" th:text="${comment.username}"></span>
-                <span class="comment-date" th:text="${comment.createdAt}">Дата</span>
+            <h3>Комментарии (<span th:text="${#lists.size(comments)}">0</span>)</h3>
+            
+            <div th:if="${comments != null and !comments.empty}">
+                <div th:each="comment : ${comments}" class="comment">
+                    <div>
+                        <span class="comment-author" th:text="${comment.username}"></span>
+                        <span class="comment-date" th:text="${comment.createdAt}">Дата</span>
+                    </div>
+                    <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
+                </div>
             </div>
-            <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
+            
+            <div th:if="${comments == null or comments.empty}" style="color: #999;">
+                Пока нет комментариев. Будьте первым!
+            </div>
+            
+            <div class="comment-form">
+                <h4>Добавить комментарий</h4>
+                <form method="post" th:action="@{/photos/comment/{id}(id=${photo.id})}">
+                    <textarea name="text" rows="3" placeholder="Напишите ваш комментарий..." required></textarea>
+                    <br><br>
+                    <button type="submit" class="btn">Отправить</button>
+                </form>
+            </div>
         </div>
-    </div>
-    
-    <div th:if="${comments == null or comments.empty}" style="color: #999;">
-        Пока нет комментариев. Будьте первым!
-    </div>
-    
-    <div class="comment-form">
-        <h4>Добавить комментарий</h4>
-        <form method="post" th:action="@{/photos/comment/{id}(id=${photo.id})}">
-            <textarea name="text" rows="3" placeholder="Напишите ваш комментарий..." required></textarea>
-            <br><br>
-            <button type="submit" class="btn">Отправить</button>
-        </form>
-    </div>
-</div>
         
-        <a th:href="@{/albums/{id}(id=${photo.albumId})}" class="back-link">← Вернуться к альбому</a>
+        <a th:href="@{/albums/{id}(id=${photo.albumId})}" class="back-link">Вернуться к альбому</a>
     </div>
 </body>
 </html>

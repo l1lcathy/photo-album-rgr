@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Друзья - Фотоальбом</title>
+    <style>
+        body {
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .friend-item, .request-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+        .btn-accept {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-reject {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-add {
+            background: #3498db;
+            color: white;
+        }
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+        .add-friend-form {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .add-friend-form input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            flex: 1;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Друзья</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Альбомы</a>
+                <a href="/photos/gallery">Галерея</a>
+                <a href="/search">Поиск</a>
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Входящие заявки</h2>
+            <div th:if="${pendingRequests != null and !pendingRequests.empty}">
+                <div th:each="req : ${pendingRequests}" class="request-item">
+                    <span>Заявка от пользователя ID: <span th:text="${req.userId}"></span></span>
+                    <div>
+                        <form method="post" th:action="@{/friends/accept/{id}(id=${req.id})}" style="display: inline;">
+                            <button type="submit" class="btn btn-accept">Принять</button>
+                        </form>
+                        <form method="post" th:action="@{/friends/reject/{id}(id=${req.id})}" style="display: inline;">
+                            <button type="submit" class="btn btn-reject">Отклонить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${pendingRequests == null or pendingRequests.empty}" class="empty">Нет входящих заявок</div>
+        </div>
+
+        <div class="card">
+            <h2>Мои друзья</h2>
+            <div th:if="${friends != null and !friends.empty}">
+                <div th:each="friend : ${friends}" class="friend-item">
+                    <span th:if="${friend.userId == 7}">Друг ID: <span th:text="${friend.friendId}"></span></span>
+                    <span th:if="${friend.friendId == 7}">Друг ID: <span th:text="${friend.userId}"></span></span>
+                    <form method="post" th:action="@{/friends/remove/{id}(id=${friend.userId == 7 ? friend.friendId : friend.userId})}">
+                        <button type="submit" class="btn btn-remove">Удалить</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${friends == null or friends.empty}" class="empty">У вас пока нет друзей</div>
+        </div>
+
+        <div class="card">
+            <h2>Добавить друга по ID</h2>
+            <form method="post" action="/friends/add" class="add-friend-form">
+                <input type="number" name="friendId" placeholder="Введите ID пользователя" required>
+                <button type="submit" class="btn btn-add">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

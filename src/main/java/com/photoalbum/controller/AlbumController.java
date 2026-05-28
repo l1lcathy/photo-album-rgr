@@ -2,28 +2,44 @@ package com.photoalbum.controller;
 
 import com.photoalbum.model.Album;
 import com.photoalbum.model.AccessLevel;
+import com.photoalbum.model.User;
 import com.photoalbum.service.AlbumService;
 import com.photoalbum.service.PhotoService;
+import com.photoalbum.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/albums")
 public class AlbumController {
 
-    private final AlbumService albumService;
-    private final PhotoService photoService;
+    @Autowired
+    private AlbumService albumService;
+    
+    @Autowired
+    private PhotoService photoService;
+    
+    @Autowired
+    private UserService userService;
 
-    public AlbumController(AlbumService albumService, PhotoService photoService) {
-        this.albumService = albumService;
-        this.photoService = photoService;
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userService.findByUsername(username);
+        return user.getId();
     }
 
     @GetMapping
     public String myAlbums(Model model) {
-        model.addAttribute("albums", albumService.getByOwner(7L));
-        return "my_albums";  // ← ИСПРАВЛЕНО
+        Long userId = getCurrentUserId();
+        model.addAttribute("albums", albumService.getByOwner(userId));
+        model.addAttribute("accessibleAlbums", albumService.getAccessibleAlbums(userId));
+        model.addAttribute("currentUserId", userId);
+        return "my_albums";
     }
 
     @GetMapping("/create")
@@ -39,13 +55,19 @@ public class AlbumController {
         album.setName(name);
         album.setDescription(description);
         album.setAccessLevel(AccessLevel.valueOf(accessLevel));
-        album.setOwnerId(7L);
+        album.setOwnerId(getCurrentUserId());
         albumService.create(album);
         return "redirect:/albums";
     }
 
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Long id, Model model) {
+        Long currentUserId = getCurrentUserId();
+        
+        if (!albumService.hasAccess(id, currentUserId)) {
+            return "redirect:/albums?error=Доступ запрещён";
+        }
+        
         Album album = albumService.findById(id);
         if (album == null) {
             return "redirect:/albums";
@@ -57,7 +79,10 @@ public class AlbumController {
 
     @PostMapping("/delete/{id}")
     public String deleteAlbum(@PathVariable Long id) {
-        albumService.delete(id);
+        Album album = albumService.findById(id);
+        if (album != null && album.getOwnerId().equals(getCurrentUserId())) {
+            albumService.delete(id);
+        }
         return "redirect:/albums";
     }
 }

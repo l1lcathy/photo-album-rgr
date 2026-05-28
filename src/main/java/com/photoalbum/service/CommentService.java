@@ -1,7 +1,10 @@
 package com.photoalbum.service;
 
 import com.photoalbum.model.Comment;
+import com.photoalbum.model.Photo;
+import com.photoalbum.model.User;
 import com.photoalbum.repository.jdbc.CommentRepositoryJdbc;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,19 +13,17 @@ import java.util.List;
 @Service
 public class CommentService {
 
-    private final CommentRepositoryJdbc commentRepository;
-    private final EmailService emailService;
-    private final UserService userService;
-
-    public CommentService(
-            CommentRepositoryJdbc commentRepository,
-            EmailService emailService,
-            UserService userService
-    ) {
-        this.commentRepository = commentRepository;
-        this.emailService = emailService;
-        this.userService = userService;
-    }
+    @Autowired
+    private CommentRepositoryJdbc commentRepository;
+    
+    @Autowired
+    private PhotoService photoService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private EmailService emailService;
 
     public Comment add(Comment comment, String ownerEmail) {
         Comment saved = commentRepository.save(comment);
@@ -38,18 +39,31 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
     
-    // Получить все комментарии к фото
     public List<Comment> getCommentsByPhotoId(Long photoId) {
         return commentRepository.findByPhotoId(photoId);
     }
     
-    // Добавить комментарий
     public void addComment(Long photoId, Long userId, String text) {
+        Photo photo = photoService.getPhotoById(photoId);
+        if (photo == null) return;
+        
+        User commentOwner = userService.findById(userId);
+        User photoOwner = userService.findById(photo.getUserId());
+        
         Comment comment = new Comment();
         comment.setPhotoId(photoId);
         comment.setUserId(userId);
         comment.setText(text);
         comment.setCreatedAt(LocalDateTime.now());
         commentRepository.save(comment);
+        
+        if (photoOwner != null && commentOwner != null && !photoOwner.getId().equals(userId)) {
+            emailService.sendCommentNotification(
+                photoOwner.getEmail(),
+                photo.getTitle(),
+                commentOwner.getUsername(),
+                text
+            );
+        }
     }
 }

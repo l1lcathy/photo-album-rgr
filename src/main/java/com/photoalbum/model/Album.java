@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Album {
     private Long id;
     private Long ownerId;
+    private String username;  
     private String name;
     private String description;
     private AccessLevel accessLevel;
@@ -26,6 +27,14 @@ public class Album {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {

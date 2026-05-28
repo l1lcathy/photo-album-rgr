@@ -9,6 +9,7 @@ public class Photo {
     private String imagePath;       // путь к файлу
     private Long albumId;           // ID альбома
     private Long userId;            // ID владельца
+    private String Username;        // ДОБАВИТЬ - имя владельца
     private Integer rating;         // рейтинг (оценка)
     private LocalDateTime createdAt; // дата загрузки
 
@@ -74,6 +75,15 @@ public class Photo {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    // ДОБАВИТЬ ГЕТТЕР И СЕТТЕР ДЛЯ USERNAME
+    public String getUsername() {
+        return Username;
+    }
+
+    public void setUsername(String Username) {
+        this.Username = Username;
     }
 
     public Integer getRating() {

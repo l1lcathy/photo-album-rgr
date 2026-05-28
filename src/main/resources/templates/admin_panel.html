@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Фотоальбом</title>
+    <style>
+        body {
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #34495e;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+        }
+        .btn-block {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-unblock {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+        }
+        select {
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .badge-admin {
+            background: #e74c3c;
+            color: white;
+        }
+        .badge-moderator {
+            background: #f39c12;
+            color: white;
+        }
+        .badge-user {
+            background: #3498db;
+            color: white;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .photo-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .photo-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .photo-info {
+            padding: 8px;
+        }
+        .photo-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+        .photo-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .photo-actions {
+            padding: 8px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Панель администратора</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Альбомы</a>
+                <a href="/photos/gallery">Галерея</a>
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Пользователи</h2>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th><th>Статус</th><th>Действия</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td>
+                            <span th:if="${user.role == 'ADMIN'}" class="badge badge-admin">ADMIN</span>
+                            <span th:if="${user.role == 'MODERATOR'}" class="badge badge-moderator">MODERATOR</span>
+                            <span th:if="${user.role == 'USER'}" class="badge badge-user">USER</span>
+                        </td>
+                        <td>
+                            <span th:if="${user.enabled}" style="color: green;">Активен</span>
+                            <span th:unless="${user.enabled}" style="color: red;">Заблокирован</span>
+                        </td>
+                        <td>
+                            <form method="post" th:action="@{/admin/user/{id}/block(id=${user.id})}" style="display: inline;">
+                                <button type="submit" class="btn btn-block" th:if="${user.enabled}">Заблокировать</button>
+                            </form>
+                            <form method="post" th:action="@{/admin/user/{id}/unblock(id=${user.id})}" style="display: inline;">
+                                <button type="submit" class="btn btn-unblock" th:unless="${user.enabled}">Разблокировать</button>
+                            </form>
+                            <form method="post" th:action="@{/admin/user/{id}/role(id=${user.id})}" style="display: inline;">
+                                <select name="role" onchange="this.form.submit()">
+                                    <option value="USER" th:selected="${user.role == 'USER'}">USER</option>
+                                    <option value="MODERATOR" th:selected="${user.role == 'MODERATOR'}">MODERATOR</option>
+                                    <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Все фотографии</h2>
+            <div th:if="${allPhotos != null and !allPhotos.empty}" class="photo-grid">
+                <div th:each="photo : ${allPhotos}" class="photo-card">
+                    <img th:src="@{${photo.imagePath}}" alt="Photo">
+                    <div class="photo-info">
+                        <h4 th:text="${photo.title}">Название</h4>
+                        <p>Автор: <span th:text="${photo.username}"></span></p>
+                        <p>Рейтинг: <span th:text="${photo.rating}"></span></p>
+                    </div>
+                    <div class="photo-actions">
+                        <form method="post" th:action="@{/admin/photo/{id}/delete(id=${photo.id})}" style="display: inline;">
+                            <button type="submit" class="btn btn-delete" onclick="return confirm('Удалить фото?')">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${allPhotos == null or allPhotos.empty}" class="empty">
+                <p>Нет загруженных фотографий</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

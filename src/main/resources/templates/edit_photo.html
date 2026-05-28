@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать фото - Фотоальбом</title>
+    <style>
+        body {
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .btn {
+            background: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Century Gothic', 'Times New Roman', serif;
+            font-size: 16px;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #219a52;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            margin-top: 10px;
+        }
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+        .preview-img {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .preview-img img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Редактировать фото</h1>
+            <div class="nav">
+                <a href="/">Главная</a>
+                <a href="/albums">Альбомы</a>
+                <a href="/logout">Выйти</a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="preview-img">
+                <img th:src="${photo.imagePath}" alt="Preview">
+            </div>
+
+            <form method="post" th:action="@{/photos/edit/{id}(id=${photo.id})}">
+                <div class="form-group">
+                    <label>Название фото</label>
+                    <input type="text" name="title" th:value="${photo.title}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea name="description" rows="4" th:text="${photo.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Теги (через запятую)</label>
+                    <input type="text" name="tags" th:value="${tagsString}" 
+                           placeholder="природа, отпуск, море">
+                </div>
+
+                <button type="submit" class="btn">Сохранить изменения</button>
+            </form>
+
+            <form method="get" th:action="@{/photos/{id}(id=${photo.id})}">
+                <button type="submit" class="btn btn-cancel">Отмена</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
