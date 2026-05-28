@@ -1,5 +1,6 @@
 package com.photoalbum.controller;
 
+import com.photoalbum.model.Photo;
 import com.photoalbum.service.PhotoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,50 +21,67 @@ public class PhotoController {
 
     @GetMapping("/gallery")
     public String gallery(Model model) {
-
         try {
-            model.addAttribute(
-                    "photos",
-                    photoService.getAllPhotos()
-            );
-
+            model.addAttribute("photos", photoService.getPhotosByUserId(7L));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return "gallery";
+    }
+    
+    @GetMapping("/album/{albumId}")
+    public String photosByAlbum(@PathVariable Long albumId, Model model) {
+        try {
+            model.addAttribute("photos", photoService.getPhotosByAlbumId(albumId));
+            model.addAttribute("albumId", albumId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "gallery";
     }
 
     @PostMapping("/upload")
     public String upload(
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "albumId", required = false) Long albumId
     ) {
-
         try {
-
-            String uploadDir = "uploads/";
-
+            String basePath = System.getProperty("user.dir");
+            String uploadDir = basePath + File.separator + "uploads" + File.separator;
+            
             File dir = new File(uploadDir);
-
             if (!dir.exists()) {
-                dir.mkdir();
+                dir.mkdirs();
             }
-
-            String path =
-                    uploadDir + file.getOriginalFilename();
-
+            
+            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String path = uploadDir + filename;
+            
             file.transferTo(new File(path));
-
-            photoService.uploadPhoto(
-                    file.getOriginalFilename(),
-                    path,
-                    1
-            );
-
+            
+            Photo photo = new Photo();
+            photo.setTitle(file.getOriginalFilename());
+            photo.setDescription("");
+            photo.setImagePath("/uploads/" + filename);
+            photo.setAlbumId(albumId != null ? albumId : 3L);
+            photo.setUserId(7L);
+            photo.setRating(0);
+            
+            photoService.uploadPhoto(photo);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
+        if (albumId != null) {
+            return "redirect:/photos/album/" + albumId;
+        }
+        return "redirect:/photos/gallery";
+    }
+    
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        photoService.deletePhoto(id);
         return "redirect:/photos/gallery";
     }
 }

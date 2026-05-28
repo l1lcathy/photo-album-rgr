@@ -1,7 +1,7 @@
 package com.photoalbum.service;
 
 import com.photoalbum.model.Comment;
-import com.photoalbum.repository.CommentRepository;
+import com.photoalbum.repository.jdbc.CommentRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,12 +9,12 @@ import java.util.List;
 @Service
 public class CommentService {
 
-    private final CommentRepository commentRepository;
+    private final CommentRepositoryJdbc commentRepository;
     private final EmailService emailService;
     private final UserService userService;
 
     public CommentService(
-            CommentRepository commentRepository,
+            CommentRepositoryJdbc commentRepository,
             EmailService emailService,
             UserService userService
     ) {

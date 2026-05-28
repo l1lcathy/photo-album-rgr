@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AlbumRepository {
+public class AlbumRepositoryOld {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public AlbumRepository(JdbcTemplate jdbcTemplate) {
+    public AlbumRepositoryOld(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

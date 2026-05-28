@@ -12,11 +12,11 @@ import java.sql.Statement;
 import java.util.List;
 
 @Repository
-public class CommentRepository {
+public class CommentRepositoryOld {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public CommentRepository(JdbcTemplate jdbcTemplate) {
+    public CommentRepositoryOld(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

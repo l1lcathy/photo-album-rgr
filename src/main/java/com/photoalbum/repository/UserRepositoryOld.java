@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import com.photoalbum.model.User;
 
 @Repository
-public class UserRepository {
+public class UserRepositoryOld {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserRepository(JdbcTemplate jdbcTemplate) {
+    public UserRepositoryOld(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

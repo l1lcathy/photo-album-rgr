@@ -1,30 +1,53 @@
 package com.photoalbum.service;
 
-import com.photoalbum.repository.PhotoRepository;
+import com.photoalbum.model.Photo;
+import com.photoalbum.repository.jdbc.PhotoRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @Service
 public class PhotoService {
 
-    private final PhotoRepository photoRepository;
+    private final PhotoRepositoryJdbc photoRepository;
 
-    public PhotoService(PhotoRepository photoRepository) {
+    public PhotoService(PhotoRepositoryJdbc photoRepository) {
         this.photoRepository = photoRepository;
     }
 
-    public void uploadPhoto(
-            String filename,
-            String path,
-            int userId
-    ) throws SQLException {
-
-        photoRepository.save(filename, path, userId);
+    // Загрузить новое фото
+    public Photo uploadPhoto(Photo photo) {
+        return photoRepository.save(photo);
     }
-
-    public List<String> getAllPhotos() throws SQLException {
-        return photoRepository.findAllPaths();
+    
+    // Найти все фото в альбоме
+    public List<Photo> getPhotosByAlbumId(Long albumId) {
+        return photoRepository.findByAlbumId(albumId);
+    }
+    
+    // Найти все фото пользователя
+    public List<Photo> getPhotosByUserId(Long userId) {
+        return photoRepository.findByUserId(userId);
+    }
+    
+    // Найти фото по ID
+    public Photo getPhotoById(Long id) {
+        return photoRepository.findById(id).orElse(null);
+    }
+    
+    // Обновить фото (название, описание, рейтинг)
+    public Photo updatePhoto(Photo photo) {
+        photoRepository.update(photo);
+        return photo;
+    }
+    
+    // Удалить фото
+    public void deletePhoto(Long id) {
+        photoRepository.deleteById(id);
+    }
+    
+    // Найти фото по тегу
+    public List<Photo> getPhotosByTagId(Long tagId) {
+        return photoRepository.findByTagId(tagId);
     }
 }

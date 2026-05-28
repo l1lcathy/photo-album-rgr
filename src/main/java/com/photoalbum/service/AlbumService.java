@@ -1,7 +1,7 @@
 package com.photoalbum.service;
 
 import com.photoalbum.model.Album;
-import com.photoalbum.repository.AlbumRepository;
+import com.photoalbum.repository.jdbc.AlbumRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @Service
 public class AlbumService {
 
-    private final AlbumRepository albumRepository;
+    private final AlbumRepositoryJdbc albumRepository;
 
-    public AlbumService(AlbumRepository albumRepository) {
+    public AlbumService(AlbumRepositoryJdbc albumRepository) {
         this.albumRepository = albumRepository;
     }
 
@@ -24,10 +24,21 @@ public class AlbumService {
     }
 
     public List<Album> getVisible(Long userId) {
-        return albumRepository.findPublicAndOwn(userId);
+        // Пока возвращаем только публичные альбомы
+        // TODO: добавить логику для "друзей" позже
+        return albumRepository.findPublicAlbums();
     }
 
     public void delete(Long id) {
         albumRepository.deleteById(id);
+    }
+    
+    public Album findById(Long id) {
+        return albumRepository.findById(id).orElse(null);
+    }
+    
+    public Album update(Album album) {
+        albumRepository.update(album);
+        return album;
     }
 }

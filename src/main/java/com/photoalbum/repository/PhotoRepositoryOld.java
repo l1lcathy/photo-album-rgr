@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class PhotoRepository {
+public class PhotoRepositoryOld {
 
     private Connection connection;
 
-    public PhotoRepository() {
+    public PhotoRepositoryOld() {
 
         try {
 

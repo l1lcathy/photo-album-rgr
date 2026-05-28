@@ -10,28 +10,28 @@
 
 <h1>Photo Gallery</h1>
 
-<form
-        method="post"
-        action="/photos/upload"
-        enctype="multipart/form-data">
-
+<form method="post" action="/photos/upload" enctype="multipart/form-data">
     <input type="file" name="file">
-
-    <button type="submit">
-        Upload
-    </button>
-
+    <button type="submit">Upload</button>
 </form>
 
 <hr>
 
 <div th:each="photo : ${photos}">
-
-    <img
-            th:src="@{/{p}(p=${photo})}"
-            width="250">
-
+    <div>
+        <h4 th:text="${photo.title}">Название</h4>
+        <img th:src="@{${photo.imagePath}}" alt="Photo" style="max-width: 300px;">
+        <p th:text="${photo.description}">Описание</p>
+    </div>
+    <hr>
 </div>
+
+<div th:if="${photos == null or photos.empty}">
+    <p>Нет фотографий. Загрузите первую!</p>
+</div>
+
+<br>
+<a href="/">На главную</a>
 
 </body>
 </html>

@@ -1,51 +1,94 @@
 package com.photoalbum.model;
 
+import java.time.LocalDateTime;
+
 public class Photo {
-    private int id;
-    private String filename;
-    private String path;
-    private String uploadDate;
-    private int userId;
+    private Long id;
+    private String title;           // название фото
+    private String description;     // описание фото
+    private String imagePath;       // путь к файлу
+    private Long albumId;           // ID альбома
+    private Long userId;            // ID владельца
+    private Integer rating;         // рейтинг (оценка)
+    private LocalDateTime createdAt; // дата загрузки
 
     public Photo() {}
 
-    public int getId() {
+    // Конструктор
+    public Photo(Long id, String title, String description, String imagePath, 
+                 Long albumId, Long userId, Integer rating, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.albumId = albumId;
+        this.userId = userId;
+        this.rating = rating;
+        this.createdAt = createdAt;
+    }
+
+    // Getters и Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getTitle() {
+        return title;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getPath() {
-        return path;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getUploadDate() {
-        return uploadDate;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setUploadDate(String uploadDate) {
-        this.uploadDate = uploadDate;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
-    public int getUserId() {
+    public Long getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(Long albumId) {
+        this.albumId = albumId;
+    }
+
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
