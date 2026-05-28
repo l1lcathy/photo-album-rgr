@@ -46,8 +46,12 @@ public class PhotoController {
     @PostMapping("/upload")
     public String upload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "albumId", required = false) Long albumId
+            @RequestParam(value = "albumId", required = false) Long albumId,
+            @RequestParam(value = "tags", required = false) String tags
     ) {
+        System.out.println("=== ЗАГРУЗКА ФОТО ===");
+        System.out.println("Теги получены: " + tags);
+        
         try {
             String basePath = System.getProperty("user.dir");
             String uploadDir = basePath + File.separator + "uploads" + File.separator;
@@ -70,7 +74,17 @@ public class PhotoController {
             photo.setUserId(7L);
             photo.setRating(0);
             
-            photoService.uploadPhoto(photo);
+            Photo savedPhoto = photoService.uploadPhoto(photo);
+            System.out.println("Фото сохранено с ID: " + savedPhoto.getId());
+            
+            // Обработка тегов
+            if (tags != null && !tags.trim().isEmpty()) {
+                System.out.println("Обрабатываем теги: " + tags);
+                photoService.addTagsToPhoto(savedPhoto.getId(), tags);
+                System.out.println("Теги обработаны");
+            } else {
+                System.out.println("Теги пустые или null");
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +111,8 @@ public class PhotoController {
         }
         model.addAttribute("photo", photo);
         model.addAttribute("comments", commentService.getCommentsByPhotoId(id));
+        model.addAttribute("tags", photoService.getTagsByPhotoId(id));
+        System.out.println("Загружено тегов для фото " + id + ": " + photoService.getTagsByPhotoId(id).size());
         return "photo";
     }
     

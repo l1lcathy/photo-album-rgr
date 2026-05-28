@@ -1,12 +1,10 @@
 package com.photoalbum.repository.jdbc;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import com.photoalbum.model.Comment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-
-import com.photoalbum.model.Comment;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Component
 public class CommentRowMapper implements RowMapper<Comment> {
@@ -17,6 +15,7 @@ public class CommentRowMapper implements RowMapper<Comment> {
         comment.setId(rs.getLong("id"));
         comment.setPhotoId(rs.getLong("photo_id"));
         comment.setUserId(rs.getLong("user_id"));
+        comment.setUsername(rs.getString("username"));
         comment.setText(rs.getString("text"));
         
         java.sql.Timestamp timestamp = rs.getTimestamp("created_at");

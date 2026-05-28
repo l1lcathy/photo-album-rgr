@@ -6,6 +6,7 @@ public class Comment {
     private Long id;
     private Long photoId;
     private Long userId;
+    private String Username;
     private String text;
     private LocalDateTime createdAt;
 
@@ -33,6 +34,14 @@ public class Comment {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return Username;
+    }
+
+    public void setUsername(String username) {
+        this.Username = username;
     }
 
     public String getText() {

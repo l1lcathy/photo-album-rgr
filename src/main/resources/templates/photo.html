@@ -23,6 +23,9 @@
         .btn-delete { background: #e74c3c; font-size: 12px; padding: 5px 10px; margin-left: 10px; }
         .back-link { display: inline-block; margin-top: 20px; color: #3498db; text-decoration: none; }
         .rating { color: #f1c40f; font-size: 20px; }
+        .tags-section { margin: 15px 0; }
+        .tag { display: inline-block; background: #e0e0e0; padding: 5px 12px; margin: 3px; border-radius: 15px; text-decoration: none; color: #333; font-size: 13px; }
+        .tag:hover { background: #3498db; color: white; }
     </style>
 </head>
 <body>
@@ -43,6 +46,16 @@
                 <p th:text="${photo.description}">Описание</p>
                 <p class="rating">⭐ Рейтинг: <span th:text="${photo.rating}">0</span>/5</p>
                 
+                <!-- БЛОК ТЕГОВ - ДОБАВЬТЕ ЭТОТ КОД -->
+                <div th:if="${tags != null and !tags.empty}" class="tags-section">
+                    <strong>🏷️ Теги:</strong>
+                    <a th:each="tag : ${tags}" th:href="@{/search?tag={tagName}(tagName=${tag.name})}" 
+                       class="tag" th:text="${tag.name}"></a>
+                </div>
+                <div th:if="${tags == null or tags.empty}" class="tags-section">
+                    <em>Нет тегов</em>
+                </div>
+                
                 <form method="post" th:action="@{/photos/rate/{id}(id=${photo.id})}" style="display: inline;">
                     <select name="rating" onchange="this.form.submit()">
                         <option value="">Оценить</option>
@@ -57,31 +70,31 @@
         </div>
 
         <div class="comments-section">
-            <h3>💬 Комментарии (<span th:text="${#lists.size(comments)}">0</span>)</h3>
-            
-            <div th:if="${comments != null and !comments.empty}">
-                <div th:each="comment : ${comments}" class="comment">
-                    <div>
-                        <span class="comment-author" th:text="${comment.username}">Пользователь</span>
-                        <span class="comment-date" th:text="${comment.createdAt}">Дата</span>
-                    </div>
-                    <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
-                </div>
+    <h3>💬 Комментарии (<span th:text="${#lists.size(comments)}">0</span>)</h3>
+    
+    <div th:if="${comments != null and !comments.empty}">
+        <div th:each="comment : ${comments}" class="comment">
+            <div>
+                <span class="comment-author" th:text="${comment.username}"></span>
+                <span class="comment-date" th:text="${comment.createdAt}">Дата</span>
             </div>
-            
-            <div th:if="${comments == null or comments.empty}" style="color: #999;">
-                Пока нет комментариев. Будьте первым!
-            </div>
-            
-            <div class="comment-form">
-                <h4>Добавить комментарий</h4>
-                <form method="post" th:action="@{/photos/comment/{id}(id=${photo.id})}">
-                    <textarea name="text" rows="3" placeholder="Напишите ваш комментарий..." required></textarea>
-                    <br><br>
-                    <button type="submit" class="btn">Отправить</button>
-                </form>
-            </div>
+            <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
         </div>
+    </div>
+    
+    <div th:if="${comments == null or comments.empty}" style="color: #999;">
+        Пока нет комментариев. Будьте первым!
+    </div>
+    
+    <div class="comment-form">
+        <h4>Добавить комментарий</h4>
+        <form method="post" th:action="@{/photos/comment/{id}(id=${photo.id})}">
+            <textarea name="text" rows="3" placeholder="Напишите ваш комментарий..." required></textarea>
+            <br><br>
+            <button type="submit" class="btn">Отправить</button>
+        </form>
+    </div>
+</div>
         
         <a th:href="@{/albums/{id}(id=${photo.albumId})}" class="back-link">← Вернуться к альбому</a>
     </div>

@@ -1,38 +1,52 @@
 package com.photoalbum.service;
 
 import com.photoalbum.model.Photo;
+import com.photoalbum.model.Tag;
 import com.photoalbum.repository.jdbc.PhotoRepositoryJdbc;
+import com.photoalbum.repository.jdbc.TagRepositoryJdbc;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PhotoService {
 
     private final PhotoRepositoryJdbc photoRepository;
+    private final TagRepositoryJdbc tagRepository;
 
-    public PhotoService(PhotoRepositoryJdbc photoRepository) {
+    public PhotoService(PhotoRepositoryJdbc photoRepository, TagRepositoryJdbc tagRepository) {
         this.photoRepository = photoRepository;
+        this.tagRepository = tagRepository;
     }
 
-    // Загрузить новое фото
     public Photo uploadPhoto(Photo photo) {
         return photoRepository.save(photo);
     }
     
-    // Найти все фото в альбоме
     public List<Photo> getPhotosByAlbumId(Long albumId) {
         return photoRepository.findByAlbumId(albumId);
     }
     
-    // Найти все фото пользователя
     public List<Photo> getPhotosByUserId(Long userId) {
         return photoRepository.findByUserId(userId);
     }
     
-    // Найти фото по ID
     public Photo getPhotoById(Long id) {
         return photoRepository.findById(id).orElse(null);
+    }
+    
+    public Photo updatePhoto(Photo photo) {
+        photoRepository.update(photo);
+        return photo;
+    }
+    
+    public void deletePhoto(Long id) {
+        photoRepository.deleteById(id);
+    }
+    
+    public List<Photo> getPhotosByTagId(Long tagId) {
+        return photoRepository.findByTagId(tagId);
     }
     
     public void ratePhoto(Long id, Integer rating) {
@@ -43,19 +57,31 @@ public class PhotoService {
         }
     }
     
-    // Обновить фото (название, описание, рейтинг)
-    public Photo updatePhoto(Photo photo) {
-        photoRepository.update(photo);
-        return photo;
+    public void addTagsToPhoto(Long photoId, String tagsString) {
+        if (tagsString == null || tagsString.trim().isEmpty()) {
+            return;
+        }
+        String[] tagNames = tagsString.split(",");
+        for (String tagName : tagNames) {
+            String trimmed = tagName.trim().toLowerCase();
+            if (!trimmed.isEmpty()) {
+                Tag tag = tagRepository.findOrCreate(trimmed);
+                tagRepository.addTagToPhoto(photoId, tag.getId());
+            }
+        }
     }
     
-    // Удалить фото
-    public void deletePhoto(Long id) {
-        photoRepository.deleteById(id);
+    public List<Tag> getTagsByPhotoId(Long photoId) {
+        return tagRepository.getTagsByPhotoId(photoId);
     }
     
-    // Найти фото по тегу
-    public List<Photo> getPhotosByTagId(Long tagId) {
-        return photoRepository.findByTagId(tagId);
+    // ========== МЕТОД ДЛЯ ПОИСКА ПО ТЕГУ ==========
+    
+    public List<Photo> searchPhotosByTag(String tagName) {
+        Tag tag = tagRepository.findByName(tagName);
+        if (tag == null) {
+            return new ArrayList<>();
+        }
+        return photoRepository.findByTagId(tag.getId());
     }
 }
